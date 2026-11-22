@@ -1,0 +1,86 @@
+@startuml
+title Turtle Graphics - Class Diagram
+
+skinparam classAttributeIconSize 0
+
+class Parser {
+    + parse(filePath: const std::string&): std::unique_ptr<Node>
+}
+
+class Node {
+    - command: std::unique_ptr<Command>
+    - next: std::unique_ptr<Node>
+}
+
+class Interpreter {
+    + execute(root: const Node&, turtle: Turtle&): void
+}
+
+interface Command {
+    + execute(turtle: Turtle&): void
+}
+
+class MoveCommand {
+    - steps: int 
+    + execute(turtle: Turtle&): void
+}
+
+class ForwardCommand {
+    - steps: int
+    + execute(turtle: Turtle&): void
+}
+
+class TurnCommand {
+    - angle: double
+    + execute(turtle: Turtle&): void
+}
+
+class DrawCommand {
+    + execute(turtle: Turtle&): void
+}
+
+class Turtle {
+    - position: Position
+    - direction: Direction
+    - pen: Pen
+    + forward(steps: int): void
+    + move(steps: int): void
+    + turn(angle: double): void
+    + draw(): void
+}
+
+class Direction {
+    + x: double
+    + y: double
+}
+
+class Position {
+    + x: double
+    + y: double
+}
+
+class Pen {
+    - color: std::string
+    - width: int
+    - down: bool
+}
+
+class Canvas {
+    + drawLine(from: Position, to: Position): void
+}
+
+Parser ..> Node : creates root
+Interpreter ..> Node : traverses
+Interpreter ..> Turtle : executes commands on
+Command <|.. MoveCommand
+Command <|.. ForwardCommand
+Command <|.. TurnCommand
+Command <|.. DrawCommand
+Command ..> Turtle : operates on
+ForwardCommand ..> Turtle : moves and draws
+MoveCommand ..> Turtle : repositions without drawing
+Turtle *-- Position
+Turtle *-- Direction
+Turtle *-- Pen
+Turtle --> Canvas : draws on
+@enduml
